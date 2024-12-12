@@ -1,4 +1,6 @@
-import { upload } from "./services.js";
+import { upload, dbArquivos } from "./services.js";
+
+const baseUrl = 'http://localhost:8080';
 
 document.getElementById("uploadButton").addEventListener("click", async () => {
     const fileInput = document.getElementById("formFileMultiple");
@@ -25,3 +27,44 @@ document.getElementById("uploadButton").addEventListener("click", async () => {
         uploadButton.disabled = false;
     }
 });
+
+document.addEventListener('DOMContentLoaded', async () => {
+    const tbody = document.getElementById("arquivos");
+
+    try {
+        const response = await dbArquivos();
+
+        response.forEach(item => {
+            const linha = document.createElement('tr');
+            
+            const celulaId = document.createElement('td');
+            celulaId.textContent = item.id;
+            linha.appendChild(celulaId);
+
+            const celulaNome = document.createElement('td');
+            celulaNome.textContent = item.fileName;
+            linha.appendChild(celulaNome);
+
+            const celulaTipo = document.createElement('td');
+            celulaTipo.textContent = item.fileType;
+            linha.appendChild(celulaTipo);
+
+            const celulaUrl = document.createElement('td');
+            const link = document.createElement('a');
+            link.href = `${baseUrl}/file/download/${item.id}`;
+            link.textContent = "Baixar";
+            link.target = "_blank";
+            celulaUrl.appendChild(link);
+            linha.appendChild(celulaUrl);
+
+            tbody.append(linha);
+        });
+    } catch (error) {
+        console.error("Erro ao buscar arquivos:", error);
+    }
+});
+
+document.getElementById("logout").addEventListener("click", () =>{
+    localStorage.clear();
+    window.location.href = "index.html"; 
+})

@@ -47,7 +47,6 @@ export async function upload(file) {
         const response = await fetch(url, {
             method: "POST",
             headers: {
-                
                 'Authorization': `Bearer ${token}`,
             },
             body: formData, 
@@ -64,4 +63,25 @@ export async function upload(file) {
         throw error;
     }
 
+}
+
+export async function dbArquivos() {
+    const url = `${baseUrl}/file/allfiles`;
+    const token = localStorage.getItem('authToken');
+
+    try{
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            }
+        });
+        if(!response.ok){
+            throw new Error('Erro ao buscar os dados');
+        }
+        const dados = await response.json();
+        return dados;
+    } catch (error) {
+        return [];
+    }
 }
